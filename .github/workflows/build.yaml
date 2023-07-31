@@ -9,7 +9,7 @@ env:
   DOTNET_VERSION: '6.0.x'                   # set this to the dotnet version to use (e.g. '2.1.x', '3.1.x', '5.0.x')
 
 jobs:
-  build-and-deploy:
+  api:
     runs-on: windows-latest
     environment: dev
     steps:
@@ -35,3 +35,42 @@ jobs:
         app-name: ${{ env.AZURE_FUNCTIONAPP_NAME }}
         package: '${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
         publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+  web:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - uses: azure/login@v1
+      with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
+
+    - name: Install dependencies
+      run: |
+        cd client
+        npm install
+
+    - name: Build
+      run: |
+        cd client
+        npm run build
+
+    - name: Upload to blob storage
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+            az storage blob delete-batch -s "\$web" --account-name weatherfinderweb --auth-mode key
+            az storage blob upload-batch --account-name weatherfinderweb --auth-mode key -d '$web' -s client/dist/weatherfinder
+    - name: Purge CDN endpoint
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+           az cdn endpoint purge --content-paths  "/client/dist/weatherfinder/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "weatherfinder"
+
+
+
