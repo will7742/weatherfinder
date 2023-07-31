@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { WeatherService } from './services/weather.service';
+import { WeatherRequest } from './services/weather-request';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'weatherfinder';
+  constructor(svc: WeatherService) {
+    svc.get({
+      city: 'Saint Louis',
+      zipcode: ''
+    } as WeatherRequest).subscribe();
+  }
 }
