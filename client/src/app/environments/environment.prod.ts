@@ -1,9 +1,7 @@
 export const environment = {
-  production: false,
-  apiBase: 'http://localhost:7071/api/',
+  production: true,
+  apiBase: 'https://weatherfinder.azurewebsites.net/api/',
   apiCodes: {
-    auth: '',
-    user: '',
-    boardgame: ''
+    weather: 'N2X9hLwXfF7IuljPKxLEAejZeyEkPtV-ZKYIcUBJnhfkAzFuWJ1hdg=='
   }
 };
