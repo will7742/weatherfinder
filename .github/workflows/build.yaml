@@ -66,11 +66,4 @@ jobs:
         inlineScript: |
             az storage blob delete-batch -s "\$web" --account-name weatherfinderweb --auth-mode key
             az storage blob upload-batch --account-name weatherfinderweb --auth-mode key -d '$web' -s client/dist/weatherfinder
-    - name: Purge CDN endpoint
-      uses: azure/CLI@v1
-      with:
-        inlineScript: |
-           az cdn endpoint purge --content-paths  "/client/dist/weatherfinder/*" --profile-name "CDN_PROFILE_NAME" --name "CDN_ENDPOINT" --resource-group "weatherfinder"
-
-
-
+    
