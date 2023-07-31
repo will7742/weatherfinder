@@ -1,0 +1,48 @@
+<nav class="navbar navbar-dark bg-dark">
+  <a class="navbar-brand" href="#">Weather Finder</a>
+</nav>
+
+<div class="container">
+  <div class="row">
+    <div class="col-8 offset-2">
+      <form class="form-inline form" [formGroup]="form">
+        <div class="input-group">
+          <select class="form-select" formControlName="type">
+            <option selected>Choose...</option>
+            <option value="city">City Name</option>
+            <option value="zip">Zipcode</option>
+            <option value="geo">Geo Coordinates</option>
+          </select>
+
+          <ng-container *ngIf="form.value.type === 'city'">
+            <input type="text" formControlName="city" class="form-control" placeholder="City Name">
+          </ng-container>
+          <ng-container *ngIf="form.value.type === 'zip'">
+            <input type="text" formControlName="zipcode" class="form-control" placeholder="Zipcode">
+          </ng-container>
+          <ng-container *ngIf="form.value.type === 'geo'">
+            <input type="text" formControlName="lat" class="form-control" placeholder="Latitude">
+            <input type="text" formControlName="long" class="form-control" placeholder="Longitude">
+          </ng-container>
+
+          <button type="submit" class="btn btn-primary" (click)="search()">Get Weather</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div class="row results" *ngIf="result">
+    <div class="col-8 offset-2">
+      <ng-container *ngIf="result.errors.length > 0">
+        <div *ngFor="let error of result.errors">
+          {{ error }}
+        </div>
+      </ng-container>
+      <ng-container *ngIf="result.errors.length === 0">
+        The Weather at {{ form.value?.city ?? form.value?.zipcode ?? (form.value?.lat + ", " + form.value?.long)}}
+        is {{ result.result.description }} and {{ getTemp(result.result.currentTemp) }}F.<br />
+        Expect a High today of {{ getTemp(result.result.maxTemp) }}F and a Low of {{ getTemp(result.result.minTemp) }}F.
+      </ng-container>
+
+    </div>
+  </div>
+</div>
